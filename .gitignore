@@ -5,3 +5,4 @@ ganache_data/
 *package-lock.json
 server/.env
 *.swp
+client/build/
