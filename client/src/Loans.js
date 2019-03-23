@@ -4,49 +4,67 @@ export class Loans extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {loanKeys: [],
-									loanIndex: null,
-									loanForm: {
-											debtor: null
-										}
-									}
-		this.createLoan = this.createLoan.bind(this); 
-	
+			debtor: "",
+			amount: 0
+		}
+		this.createLoan = this.createLoan.bind(this) 
+
 	}
 
 	componentDidMount() {
 		const { drizzle, drizzleState } = this.props;
 		const contract = drizzle.contracts.Bankcoin;	
 		let address = this.props.drizzleState.accounts[0];
+		let events = contract.events.InscribeLoan({}, (error, event) => {
+			console.log(error, event);
+		})
 	}
 
-	createLoan(lender, amount) {
-		console.log('ping')
+	async createLoan(event) {
+		event.preventDefault()
+		console.log(event)
 		let address = this.props.drizzleState.accounts[0]
-		let tx = this.props.drizzle.contracts.Bankcoin.methods.createLoan.cacheSend(lender, amount, {from: address})
-		console.log(tx)
+		const contract = this.props.drizzle.contracts.Bankcoin
+
+		let hope = await contract.methods.createLoan(this.state.debtor, this.state.amount).send()
+		console.log(hope)
+
+		//let tx = contracts.createLoan
+		//	.cacheSend(
+		//		this.state.lender,
+		//		this.state.amount,
+		//		{
+		//			from: address
+		//		})
+		//	console.log(tx)
 	}
 
 	render() {
-		
-		return (
+
+		return (<div>
+			<form onSubmit={this.createLoan}>
+				<label>
+					Inscribe Debtor:
+					<input type="text"
+						value={this.state.debtor}
+						name="debtor"
+						onChange={(event) => {
+							console.log(event)
+							this.setState({debtor: event.target.value})
+						}}/>
+				</label>
+				<label>
+					<input type="text"
+						value={this.state.amount}
+						name="amount"
+						onChange={(event) => {
+							this.setState({amount: event.target.value})
+						}}/>
+				</label>
+				<input type="submit" value="Submit" />
+			</form>
 			<div>
-				<form onSubmit={() => {
-					const debtor = this.state.loanForm.debtor
-					const amount = this.state.loanForm.amount
-					this.createLoan(debtor, amount)
-					
-				}
-				}>
-					<label>
-						Inscribe Debtor:
-						<input type="text" name="debtors" />
-					</label>
-					<input type="submit" value="Submit" />
-				</form>
-				<div>
-					<p>{this.state.loanIndex}</p>
-					
-				</div>
-				</div>)
+			</div>
+		</div>)
 	}
 }

@@ -4,3 +4,4 @@ client/src/compiled/
 ganache_data/
 *package-lock.json
 server/.env
+*.swp

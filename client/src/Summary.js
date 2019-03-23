@@ -3,7 +3,8 @@ export class Summary extends React.Component {
 	state = {
 		balanceKey: null,
 		assetKey: null,
-		liabilityKey: null
+		liabilityKey: null,
+		InscribeLoan: null,
 	}
 	componentDidMount() {
 		//access drizzle props within componentDidMount
@@ -12,7 +13,9 @@ export class Summary extends React.Component {
 		let address = this.props.drizzleState.accounts[0]
 		const balanceKey = contract.methods.balanceOf.cacheCall(address)	
 		const assetKey = contract.methods.assetsOf.cacheCall(address)	
-		const liabilityKey = contract.methods.liabilitiesOf.cacheCall(address)	
+		const liabilityKey = contract.methods.liabilitiesOf.cacheCall(address)
+		let InscribeLoan = contract.events.InscribeLoan()
+		this.setState({ InscribeLoan })
 		this.setState({ balanceKey })
 		this.setState({ assetKey })
 		this.setState({ liabilityKey })
@@ -40,6 +43,9 @@ export class Summary extends React.Component {
 			liabilities = "Loading" 
 		}
 
+		let event = null
+		event = this.state.InscribeLoan
+		console.log(event)
 		console.log(balance)
 		return (
 			<div>
@@ -54,6 +60,10 @@ export class Summary extends React.Component {
 				<div>
 					<p>Liabilities</p>
 					<p>{liabilities}</p>
+				</div>
+				<div>
+					<p>Event</p>
+					<p>{event}</p>
 				</div>
 			</div>
 

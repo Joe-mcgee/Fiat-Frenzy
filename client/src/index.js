@@ -16,7 +16,10 @@ import {
 import Bankcoin from './contracts/Bankcoin.json';
 
 const options = {
-				contracts: [Bankcoin]
+	contracts: [Bankcoin],
+	events: {
+		Bankcoin: ['InscribeLoan'],
+	}
 }
 const drizzleStore = generateStore(options);
 const drizzle = new Drizzle(options, drizzleStore);
