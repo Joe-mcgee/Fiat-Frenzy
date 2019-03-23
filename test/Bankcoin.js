@@ -6,11 +6,27 @@ contract("Bankcoin", async (accounts) => {
 	let inscriptions;
 	beforeEach("setup contract for Each Test", async () => {
 		instance = await Bankcoin.deployed();
-		events = await instance.getPastEvents();
-		inscriptions = events.map((event) => {
-			let Result = event.args
-			if (Result._debtor = accounts[1]) {
-				return Result
+		
+		inscriptions = await instance.getPastEvents('InscribeLoan', {
+			fromBlock: 0,
+			toBlock: 'latest'
+		}, (err, result) => {
+			if (!err) {
+				return result
+			} else {
+				console.log(error)
+			}
+		});
+
+		signedLoans = await instance.getPastEvents('SignLoan', {
+			fromBlock: 0,
+			toBlock: 'latest'
+
+		}, (err, result) => {
+			if (!err) {
+				return result
+			} else {
+				console.log(error)
 			}
 		})
 	})
@@ -74,8 +90,12 @@ contract("Bankcoin", async (accounts) => {
 	})
 
 	it("a Loan can be signed with events by debter", async () => {
-		let lendor = await inscriptions[0]["_lendor"]
-		
+		let lender = inscriptions[0].args._lender
+		let index = inscriptions[0].args._id
+		let sign = await instance.signLoanByIndex.call(lender, index, {
+			from: accounts[1]
+		})
+		assert.equal(sign, true)
 	})
 
 	it("A Loan index can return a tuple of a loan", async () => { 
@@ -129,6 +149,12 @@ contract("Bankcoin", async (accounts) => {
 
 	})
 
+	it("signLoanByIndex should emit the SignLoan event", () => {
+		assert.equal(signedLoans.length, 1)
+	})
+
+	
+
 	it("Repay loan by Index should repay a loan", async () => {
 		let index = await instance.getDebtIndex.call(accounts[0], {
 			from: accounts[1]
@@ -141,5 +167,10 @@ contract("Bankcoin", async (accounts) => {
 			from: accounts[1]
 		})
 		assert.equal(true, payback);
+	})
+
+	it("repay loan by Index can be called by event data", () => {
+		console.log(events)
+		
 	})
 })

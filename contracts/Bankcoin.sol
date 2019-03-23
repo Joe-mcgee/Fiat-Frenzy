@@ -9,6 +9,11 @@ contract Bankcoin {
 		uint256 indexed _id,
 		address indexed  _debtor
 	);
+	event SignLoan(
+		address indexed _lender,
+	  uint256	indexed _id,
+		address indexed _debtor
+	);
 
 
 	// depositing vs multisig loaning
@@ -131,6 +136,8 @@ contract Bankcoin {
 		_accounts[lender]._liabilities += loan._principle;
 		_accounts[lender]._assets  += loan._principle;
 		_loans[lender][msg.sender][index - 1]._isApproved = true;
+		// SignLoan(Creditor, index, Lender)
+		emit SignLoan(msg.sender, index, lender);
 		return true;
 	}
 
