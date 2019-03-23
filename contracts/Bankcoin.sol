@@ -27,7 +27,7 @@ contract Bankcoin {
 	}
 	// _loans[lender][debtor]
 	mapping (address => mapping (address => Loan[])) _loans;
-	// _loanIndices[lendor][sendor]
+	// _loanIndices[lender][sendor]
 	// its an array to utilize .push for the index
 	mapping (address => mapping (address => uint256[])) _loanIndices;
 	uint256 public reserveRequirement;
@@ -123,23 +123,23 @@ contract Bankcoin {
 		return true;		
 	}
 
-	function signLoanByIndex(address lendor, uint256 index) public returns (bool) {
-		Loan memory loan = _loans[lendor][msg.sender][index - 1];
+	function signLoanByIndex(address lender, uint256 index) public returns (bool) {
+		Loan memory loan = _loans[lender][msg.sender][index - 1];
 		// yes the mint function is here
 		_mint(msg.sender, loan._principle);
 
-		_accounts[lendor]._liabilities += loan._principle;
-		_accounts[lendor]._assets  += loan._principle;
-		_loans[lendor][msg.sender][index - 1]._isApproved = true;
+		_accounts[lender]._liabilities += loan._principle;
+		_accounts[lender]._assets  += loan._principle;
+		_loans[lender][msg.sender][index - 1]._isApproved = true;
 		return true;
 	}
 
-	function getDebtIndex(address lendor) public returns (uint256) {
-		return _loanIndices[lendor][msg.sender].length;
+	function getDebtIndex(address lender) public returns (uint256) {
+		return _loanIndices[lender][msg.sender].length;
 	}
 
-	function getDebtByIndex(address lendor, uint256 index) public returns (uint256, uint256, bool) {
-		Loan memory loan = _loans[lendor][msg.sender][index - 1];
+	function getDebtByIndex(address lender, uint256 index) public returns (uint256, uint256, bool) {
+		Loan memory loan = _loans[lender][msg.sender][index - 1];
 		return (loan._principle, loan._time, loan._isApproved);
 
 	}
@@ -154,10 +154,10 @@ contract Bankcoin {
 	}
 
 
-	function repayLoanByIndex(address lendor, uint256 index, uint256 amount) public payable returns (bool) {
-		_loans[lendor][msg.sender][index - 1]._principle -= amount;
-		transfer(lendor, amount);
-		_accounts[lendor]._liabilities -= 1;
+	function repayLoanByIndex(address lender, uint256 index, uint256 amount) public payable returns (bool) {
+		_loans[lender][msg.sender][index - 1]._principle -= amount;
+		transfer(lender, amount);
+		_accounts[lender]._liabilities -= 1;
 		_accounts[msg.sender]._liabilities -= amount;
 		return true;
 	}

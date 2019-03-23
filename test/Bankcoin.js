@@ -2,13 +2,21 @@ const Bankcoin =artifacts.require("Bankcoin");
 
 contract("Bankcoin", async (accounts) => {
 	let instance;
+	let events;
+	let inscriptions;
 	beforeEach("setup contract for Each Test", async () => {
 		instance = await Bankcoin.deployed();
+		events = await instance.getPastEvents();
+		inscriptions = events.map((event) => {
+			let Result = event.args
+			if (Result._debtor = accounts[1]) {
+				return Result
+			}
+		})
 	})
 
 	it("should provide a a whole number that can represenet to 1/phi", async () => {
 		let reserveRequirement = await instance.reserveRequirement.call()
-		console.log(reserveRequirement.toString())
 		assert.equal("618033989", reserveRequirement.toString())
 	})
 
@@ -62,35 +70,16 @@ contract("Bankcoin", async (accounts) => {
 	})
 
 	it("a debtor can query the logs and retrive a loan inscribed to them", async () => {
-		let pastEvents = await instance.getPastEvents();
-		let inscriptions = pastEvents.map((event) => {
-			let Result = event.args
-			console.log(Result)
-			if (Result._debtor = accounts[1]) {
-				return Result
-			}
-		})
-		let testResult = {
-			_lender: accounts[0],
-			_id: 1,
-		}
-		console.log(inscriptions)
-		assert.deepEqual(
-			[
-				{
-					_lender: inscriptions[0]._lender,
-					 _id: inscriptions[0]._id.length,
-				},
-			],
-				[testResult]
-		)
+		assert.equal(inscriptions.length, 1)
 	})
 
-	
+	it("a Loan can be signed with events by debter", async () => {
+		let lendor = await inscriptions[0]["_lendor"]
+		
+	})
 
 	it("A Loan index can return a tuple of a loan", async () => { 
 		let index = await instance.getLoanIndex.call(accounts[1])
-		console.log(index.toNumber())
 		let loan = await instance.getLoanByIndex.call(accounts[1], 1)
 		// Result { '0': <BN: 32>, '1': <BN: 5c7c65e5>, '2': false }
 		assert.equal(loan['0'].toNumber(), 50)
@@ -100,6 +89,7 @@ contract("Bankcoin", async (accounts) => {
 		let index = await instance.getDebtIndex.call(accounts[0], {
 			from: accounts[1]
 		})
+
 		assert.equal(index, 1)
 	})
 
@@ -122,7 +112,6 @@ contract("Bankcoin", async (accounts) => {
 		let sign = await instance.signLoanByIndex.call(accounts[0], index, {
 			from: accounts[1]
 		})
-		console.log(sign)
 		assert.equal(sign, true)
 	})
 
@@ -136,7 +125,6 @@ contract("Bankcoin", async (accounts) => {
 		})
 
 		let transfer = await instance.transfer.call(accounts[2], 51);
-		console.log(transfer)
 		assert.equal(transfer, false)
 
 	})
