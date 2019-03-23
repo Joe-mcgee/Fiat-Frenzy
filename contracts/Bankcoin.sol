@@ -2,6 +2,14 @@ pragma solidity ^0.5.0;
 import "./Helpers.sol";
 import "./Safemath.sol";
 contract Bankcoin {
+	// contracts are bi-maps equiped with an index
+	
+	event InscribeLoan(
+		address indexed _lender,
+		uint256 indexed _id,
+		address indexed  _debtor
+	);
+
 
 	// depositing vs multisig loaning
 	struct Account {
@@ -11,6 +19,7 @@ contract Bankcoin {
 	}
 	mapping (address => Account) _accounts;
 
+	
 	struct Loan {
 		uint256 _principle;
 		uint256 _time;
@@ -107,8 +116,11 @@ contract Bankcoin {
 			return false;
 		}	
 		Loan memory newLoan = Loan(amount, now, false);
+		// add to chain
 		_loans[msg.sender][debtor].push(newLoan);
 		_loanIndices[msg.sender][debtor].push(_loans[msg.sender][debtor].length);
+
+		emit InscribeLoan(msg.sender,_loanIndices[msg.sender][debtor].length, debtor);
 		return true;		
 	}
 
