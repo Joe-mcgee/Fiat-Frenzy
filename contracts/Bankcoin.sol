@@ -3,7 +3,7 @@ import "./Helpers.sol";
 import "./Safemath.sol";
 contract Bankcoin {
 	// contracts are bi-maps equiped with an index
-	
+
 	event InscribeLoan(
 		address indexed _lender,
 		uint256 indexed _id,
@@ -19,7 +19,7 @@ contract Bankcoin {
 	}
 	mapping (address => Account) _accounts;
 
-	
+
 	struct Loan {
 		uint256 _principle;
 		uint256 _time;
@@ -29,8 +29,7 @@ contract Bankcoin {
 	mapping (address => mapping (address => Loan[])) _loans;
 	// _loanIndices[lendor][sendor]
 	// its an array to utilize .push for the index
-	mapping (address => mapping (address => uint256[])) _loanIndices;	
-
+	mapping (address => mapping (address => uint256[])) _loanIndices;
 	uint256 public reserveRequirement;
 	uint256 public totalSupply;
 
@@ -41,7 +40,7 @@ contract Bankcoin {
 		reserveRequirement = Helpers.percent(17167680177565, 27777890035288, 9);
 		// Outputs a whole number representing a proportion
 		// 61833989
-		
+
 		// initial amount
 		// Look to the wiki for information on actual production scenario
 		Account memory account = Account(100, 0, 0);
