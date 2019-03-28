@@ -18,14 +18,19 @@ import Bankcoin from './contracts/Bankcoin.json';
 
 const options = {
 	contracts: [Bankcoin],
-	events: {
+	events: [{
 		eventName: "InscribeLoan",
 		eventOptions: {
 			fromBlock: 0,
 			toBlock: 'latest'
 		}
-	},
-
+	}, {
+		eventName: "CreateLoan",
+		eventOptions: {
+			fromBlock: 0,
+			toBlock: 'latest'
+		}
+		}]
 }
 const drizzleStore = generateStore(options);
 const drizzle = new Drizzle(options, drizzleStore);
