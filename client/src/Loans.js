@@ -1,25 +1,34 @@
 import React from "react";
 
+
 export class Loans extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state = {loanKeys: [],
 			debtor: "",
-			amount: 0
+			amount: 0,
+			inscriptions: []
 		}
 		this.createLoan = this.createLoan.bind(this) 
-
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		const { drizzle, drizzleState } = this.props;
-		const contract = drizzle.contracts.Bankcoin;	
-		let address = this.props.drizzleState.accounts[0];
-		let events = contract.events.InscribeLoan({}, (error, event) => {
-			console.log(error, event);
-		})
+		const contract = drizzle.contracts.Bankcoin
+		let Inscriptions = await this.getInscriptions()
+		this.setState({inscriptions: Inscriptions})	
 	}
 
+	async getInscriptions() {
+		let contract = this.props.drizzle.contracts.Bankcoin
+		let BankcoinWeb3 = new this.props.drizzle.web3.eth.Contract(contract.abi, contract.address)
+		let pastInscriptions = await BankcoinWeb3.getPastEvents('InscribeLoan',
+			{
+				fromBlock: 0, toBlock: 'latest'
+			})
+		return pastInscriptions
+	}
+	
 	async createLoan(event) {
 		event.preventDefault()
 		console.log(event)
@@ -27,8 +36,7 @@ export class Loans extends React.Component {
 		const contract = this.props.drizzle.contracts.Bankcoin
 
 		let hope = await contract.methods.createLoan(this.state.debtor, this.state.amount).send()
-		console.log(hope)
-
+		console.log(await this.getInscriptions())
 		//let tx = contracts.createLoan
 		//	.cacheSend(
 		//		this.state.lender,
@@ -63,6 +71,13 @@ export class Loans extends React.Component {
 				</label>
 				<input type="submit" value="Submit" />
 			</form>
+			<p>Inscriptions written to</p>
+			<tbody>
+				{this.state.inscriptions.map((inscription, i) => {
+					return <tr key={i}>{inscription.returnValues._debtor}</tr>
+				})
+				}
+			</tbody>
 			<div>
 			</div>
 		</div>)

@@ -6,7 +6,7 @@ export class Summary extends React.Component {
 		liabilityKey: null,
 		InscribeLoan: null,
 	}
-	componentDidMount() {
+	async componentDidMount() {
 		//access drizzle props within componentDidMount
 		const { drizzle, drizzleState } = this.props;
 		const contract = drizzle.contracts.Bankcoin;	
@@ -14,8 +14,6 @@ export class Summary extends React.Component {
 		const balanceKey = contract.methods.balanceOf.cacheCall(address)	
 		const assetKey = contract.methods.assetsOf.cacheCall(address)	
 		const liabilityKey = contract.methods.liabilitiesOf.cacheCall(address)
-		let InscribeLoan = contract.events.InscribeLoan()
-		this.setState({ InscribeLoan })
 		this.setState({ balanceKey })
 		this.setState({ assetKey })
 		this.setState({ liabilityKey })

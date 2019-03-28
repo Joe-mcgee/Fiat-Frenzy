@@ -10,7 +10,8 @@ import {
 } from "drizzle";
 
 import {
-				DrizzleContext
+	DrizzleContext,
+
 } from "drizzle-react";
 
 import Bankcoin from './contracts/Bankcoin.json';
@@ -18,8 +19,13 @@ import Bankcoin from './contracts/Bankcoin.json';
 const options = {
 	contracts: [Bankcoin],
 	events: {
-		Bankcoin: ['InscribeLoan'],
-	}
+		eventName: "InscribeLoan",
+		eventOptions: {
+			fromBlock: 0,
+			toBlock: 'latest'
+		}
+	},
+
 }
 const drizzleStore = generateStore(options);
 const drizzle = new Drizzle(options, drizzleStore);
