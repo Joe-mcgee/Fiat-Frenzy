@@ -11,10 +11,12 @@ export class Loans extends React.Component {
 				toMe: [],
 				fromMe: []
 			},
+			inscriptionKeys: null,
 			signedLoans: {
 				asDebtor: [],
 				asLender: []
-			}
+			},
+			
 		}
 		this.createLoan = this.createLoan.bind(this) 
 	}
@@ -22,14 +24,30 @@ export class Loans extends React.Component {
 	async componentDidMount() {
 		const { drizzle, drizzleState } = this.props;
 		const contract = drizzle.contracts.Bankcoin
-		let Inscriptions = await this.getInscriptions()
-		let organizedInscriptions = this.organizeInscriptions(Inscriptions)
-		console.log(organizedInscriptions)
+		let address = this.props.drizzleState.accounts[0]
+		let inscriptions = await this.getInscriptions()
+		let organizedInscriptions = this.organizeInscriptions(inscriptions)
 		this.setState({inscriptions: organizedInscriptions})
 		let SignedLoans = await this.getSignedLoans()
 		let organizedLoans = this.organizeSignedLoans(SignedLoans)
 		this.setState({signedLoans: organizedLoans})
 
+		let inscriptionKeys = this.state.inscriptions.fromMe.map((inscription) => {
+			let index = inscription.returnValues._id
+			let debtor = inscription.returnValues._debtor
+			return contract.methods.getLoanByIndex.cacheCall(debtor, index)
+		})
+		this.setState({inscriptionKeys: inscriptionKeys})
+	}
+
+	async getLoans() {
+		this.state.inscriptions.fromMe.forEach(async (inscription) => {
+			const contract = this.props.drizzle.contracts.Bankcoin
+			let index = inscription.returnValues._id
+			let debtor = inscription.returnValues._debtor
+			let loan = await contract.methods.getLoanByIndex(debtor, index).send()
+			console.log(loan)
+		})
 	}
 
 	async getInscriptions() {
@@ -49,7 +67,6 @@ export class Loans extends React.Component {
 		}
 		
 		inscriptions.forEach((inscription) => {
-			console.log(inscription)
 			if (inscription.returnValues._debtor === this.props.drizzleState.accounts[0]) {
 			organizedInscriptions.toMe.push(inscription)
 			}
@@ -63,7 +80,6 @@ export class Loans extends React.Component {
 
 	async createLoan(event) {
 		event.preventDefault()
-		console.log(event)
 		let address = this.props.drizzleState.accounts[0]
 		const contract = this.props.drizzle.contracts.Bankcoin
 
@@ -104,7 +120,6 @@ export class Loans extends React.Component {
 		}
 		
 		signedLoans.forEach((loan) => {
-			console.log(loan)
 			if (loan.returnValues._debtor === this.props.drizzleState.accounts[0]) {
 			organizedLoans.asDebtor.push(loan)
 			}
@@ -117,7 +132,29 @@ export class Loans extends React.Component {
 	}
 
 	render() {
+		const { Bankcoin } = this.props.drizzleState.contracts
+		console.log(this.state.inscriptionKeys)	
+		let loanStuff = {0: "Loading", 1: "Loading", 2: "Loading"}
+		for (let i in this.state.inscriptionKeys) {
+			let values = [];
+			let inscriptionKey = this.state.inscriptionKeys[i]
+			let loanTuple;
+			if (inscriptionKey in Bankcoin.getLoanByIndex) {
+				loanTuple = Bankcoin.getLoanByIndex[inscriptionKey].value
+				let formatTime = new Date(loanTuple[1] *1000)
+				loanTuple[1] = formatTime.toString()
 
+				values.push(loanTuple)
+
+
+			} else {
+				loanTuple = {0: "Loading", 1: "Loading", 2: "Loading"}
+				values.push(loanTuple)
+			}
+			loanStuff = values
+		}
+		console.log(loanStuff)
+		
 		return (<div>
 			<form onSubmit={this.createLoan}>
 				<label>
@@ -145,11 +182,20 @@ export class Loans extends React.Component {
 				<thead>
 					<tr>
 						<th>debtor</th>
+						<th>amount</th>
+						<th>time</th>
+						<th>Status</th>
+
 					</tr>
 				</thead>
 				<tbody>
 					{this.state.inscriptions.fromMe.map((inscription, i) => {
-						return <tr key={i}><td>{inscription.returnValues._debtor}</td></tr>
+						return (<tr key={i}>
+										 <td>{inscription.returnValues._debtor}</td>
+										 <td>{loanStuff[i] ? loanStuff[i][0]: "Loading"}</td>
+										 <td>{loanStuff[i][1]}</td>
+										 <td>{loanStuff[i][2].toString()}</td> 
+									  </tr>)
 					})
 					}
 				</tbody>
@@ -159,6 +205,7 @@ export class Loans extends React.Component {
 				<thead>
 					<tr>
 						<th>lender</th>
+						<th>actions</th>
 					</tr>
 				</thead>
 				<tbody>

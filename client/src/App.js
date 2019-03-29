@@ -1,6 +1,9 @@
 import { Summary } from './Summary';
+import { Assets } from './Assets';
+
 import { Loans } from "./Loans";
 import { Debts } from "./Debts";
+
 import { DrizzleContext } from "drizzle-react";
 import React, { Component } from "react";
 export const App = () => (
@@ -18,6 +21,9 @@ export const App = () => (
 			return (
 				<div>
 				<Summary
+					drizzle={drizzle}
+					drizzleState={drizzleState} />
+				<Assets
 					drizzle={drizzle}
 					drizzleState={drizzleState} />
 				<Loans
