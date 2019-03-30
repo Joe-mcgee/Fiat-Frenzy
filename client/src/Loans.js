@@ -16,7 +16,8 @@ export class Loans extends React.Component {
 				asDebtor: [],
 				asLender: []
 			},
-			
+			signedLoanKeys: null,
+
 		}
 		this.createLoan = this.createLoan.bind(this) 
 	}
@@ -38,6 +39,13 @@ export class Loans extends React.Component {
 			return contract.methods.getLoanByIndex.cacheCall(debtor, index)
 		})
 		this.setState({inscriptionKeys: inscriptionKeys})
+
+		let signedLoanKeys = this.state.signedLoans.asDebtor.map((signedLoan) => {
+			let index = signedLoan.returnValues._id
+			let lender = signedLoan.returnValues._lender
+			return contract.methods.getDebtByIndex.cacheCall(lender, index)
+		})
+		this.setState({signedLoanKeys: signedLoanKeys})
 	}
 
 	async getLoans() {
@@ -65,10 +73,10 @@ export class Loans extends React.Component {
 			toMe: [],
 			fromMe: [],
 		}
-		
+
 		inscriptions.forEach((inscription) => {
 			if (inscription.returnValues._debtor === this.props.drizzleState.accounts[0]) {
-			organizedInscriptions.toMe.push(inscription)
+				organizedInscriptions.toMe.push(inscription)
 			}
 			if (inscription.returnValues._lender === this.props.drizzleState.accounts[0]) {
 				organizedInscriptions.fromMe.push(inscription)
@@ -118,10 +126,10 @@ export class Loans extends React.Component {
 			asDebtor: [],
 			asLender: [],
 		}
-		
+
 		signedLoans.forEach((loan) => {
 			if (loan.returnValues._debtor === this.props.drizzleState.accounts[0]) {
-			organizedLoans.asDebtor.push(loan)
+				organizedLoans.asDebtor.push(loan)
 			}
 			if (loan.returnValues._lender === this.props.drizzleState.accounts[0]) {
 				organizedLoans.asLender.push(loan)
@@ -135,6 +143,7 @@ export class Loans extends React.Component {
 		const { Bankcoin } = this.props.drizzleState.contracts
 		console.log(this.state.inscriptionKeys)	
 		let loanStuff = {0: "Loading", 1: "Loading", 2: "Loading"}
+		let debtStuff = {0: "Loading", 1: "Loading", 2: "Loading"}
 		for (let i in this.state.inscriptionKeys) {
 			let values = [];
 			let inscriptionKey = this.state.inscriptionKeys[i]
@@ -153,8 +162,23 @@ export class Loans extends React.Component {
 			}
 			loanStuff = values
 		}
-		console.log(loanStuff)
 		
+		for (let j in this.state.signedLoanKeys) {
+			let values = []
+			let signedLoanKey = this.state.signedLoanKeys[j]
+			let debtTuple
+			if (signedLoanKey in Bankcoin.getDebtByIndex) {
+				debtTuple = Bankcoin.getDebtByIndex[signedLoanKey].value
+				console.log(debtTuple)
+				let formatTime = new Date(debtTuple[1] *1000)
+				debtTuple[1] = formatTime.toString()
+				values.push(debtTuple)
+			} else {
+				debtTuple = {0: "Loading", 1:"Loading", 2:"Loading"}
+				values.push(debtTuple)
+			}
+			debtStuff = values
+		}
 		return (<div>
 			<form onSubmit={this.createLoan}>
 				<label>
@@ -191,11 +215,11 @@ export class Loans extends React.Component {
 				<tbody>
 					{this.state.inscriptions.fromMe.map((inscription, i) => {
 						return (<tr key={i}>
-										 <td>{inscription.returnValues._debtor}</td>
-										 <td>{loanStuff[i] ? loanStuff[i][0]: "Loading"}</td>
-										 <td>{loanStuff[i][1]}</td>
-										 <td>{loanStuff[i][2].toString()}</td> 
-									  </tr>)
+							<td>{inscription.returnValues._debtor}</td>
+							<td>{loanStuff[i] ? loanStuff[i][0]: "Loading"}</td>
+							<td>{loanStuff[i][1]}</td>
+							<td>{loanStuff[i][2].toString()}</td> 
+						</tr>)
 					})
 					}
 				</tbody>
@@ -205,6 +229,9 @@ export class Loans extends React.Component {
 				<thead>
 					<tr>
 						<th>lender</th>
+						<th>amount</th>
+						<th>time</th>
+						<th>status</th>
 						<th>actions</th>
 					</tr>
 				</thead>
@@ -212,12 +239,15 @@ export class Loans extends React.Component {
 					{this.state.inscriptions.toMe.map((inscription, i) => {
 						return <tr key={i}>
 							<td>{inscription.returnValues._lender}</td>
+							<td>{debtStuff[i][0]}</td>
+							<td>{debtStuff[i][1]}</td>
+							<td>{debtStuff[i][2].toString()}</td>
 							<td><button onClick={() => this.signLoan(inscription.returnValues._lender, inscription.returnValues._id)}>Sign Loan</button>
 							</td>
-							</tr>
-						})
+						</tr>
+					})
 					}
-					
+
 				</tbody>
 			</table>
 
