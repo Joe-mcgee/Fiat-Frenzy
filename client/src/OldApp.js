@@ -1,7 +1,11 @@
+import { Summary } from './Summary';
+import { Assets } from './Assets';
+
+import { Loans } from "./Loans";
+import { Debts } from "./Debts";
 
 import { DrizzleContext } from "drizzle-react";
 import React, { Component } from "react";
-import { Layout } from "./Layout/Layout" 
 export const App = () => (
 	//DrizzleContext Consumer gives us access to our drizzle objects.
 	<DrizzleContext.Consumer>
@@ -16,9 +20,18 @@ export const App = () => (
 			//pass drizzle down as props into a subcomponen
 			return (
 				<div>
-					<Layout 
-						drizzle={drizzle}
-						drizzleState={drizzleState} />
+				<Summary
+					drizzle={drizzle}
+					drizzleState={drizzleState} />
+				<Assets
+					drizzle={drizzle}
+					drizzleState={drizzleState} />
+				<Loans
+					drizzle={drizzle}
+					drizzleState={drizzleState} />
+				<Debts
+					drizzle={drizzle}
+					drizzleState={drizzleState} />
 			</div>
 			)
 		}}
