@@ -11,10 +11,13 @@ export class Loans extends React.Component {
 				toMe: [],
 				fromMe: []
 			},
+			inscriptionKeys: null,
 			signedLoans: {
 				asDebtor: [],
 				asLender: []
-			}
+			},
+			signedLoanKeys: null,
+
 		}
 		this.createLoan = this.createLoan.bind(this) 
 	}
@@ -22,14 +25,37 @@ export class Loans extends React.Component {
 	async componentDidMount() {
 		const { drizzle, drizzleState } = this.props;
 		const contract = drizzle.contracts.Bankcoin
-		let Inscriptions = await this.getInscriptions()
-		let organizedInscriptions = this.organizeInscriptions(Inscriptions)
-		console.log(organizedInscriptions)
+		let address = this.props.drizzleState.accounts[0]
+		let inscriptions = await this.getInscriptions()
+		let organizedInscriptions = this.organizeInscriptions(inscriptions)
 		this.setState({inscriptions: organizedInscriptions})
 		let SignedLoans = await this.getSignedLoans()
 		let organizedLoans = this.organizeSignedLoans(SignedLoans)
 		this.setState({signedLoans: organizedLoans})
 
+		let inscriptionKeys = this.state.inscriptions.fromMe.map((inscription) => {
+			let index = inscription.returnValues._id
+			let debtor = inscription.returnValues._debtor
+			return contract.methods.getLoanByIndex.cacheCall(debtor, index)
+		})
+		this.setState({inscriptionKeys: inscriptionKeys})
+
+		let signedLoanKeys = this.state.signedLoans.asDebtor.map((signedLoan) => {
+			let index = signedLoan.returnValues._id
+			let lender = signedLoan.returnValues._lender
+			return contract.methods.getDebtByIndex.cacheCall(lender, index)
+		})
+		this.setState({signedLoanKeys: signedLoanKeys})
+	}
+
+	async getLoans() {
+		this.state.inscriptions.fromMe.forEach(async (inscription) => {
+			const contract = this.props.drizzle.contracts.Bankcoin
+			let index = inscription.returnValues._id
+			let debtor = inscription.returnValues._debtor
+			let loan = await contract.methods.getLoanByIndex(debtor, index).send()
+			console.log(loan)
+		})
 	}
 
 	async getInscriptions() {
@@ -47,11 +73,10 @@ export class Loans extends React.Component {
 			toMe: [],
 			fromMe: [],
 		}
-		
+
 		inscriptions.forEach((inscription) => {
-			console.log(inscription)
 			if (inscription.returnValues._debtor === this.props.drizzleState.accounts[0]) {
-			organizedInscriptions.toMe.push(inscription)
+				organizedInscriptions.toMe.push(inscription)
 			}
 			if (inscription.returnValues._lender === this.props.drizzleState.accounts[0]) {
 				organizedInscriptions.fromMe.push(inscription)
@@ -63,7 +88,6 @@ export class Loans extends React.Component {
 
 	async createLoan(event) {
 		event.preventDefault()
-		console.log(event)
 		let address = this.props.drizzleState.accounts[0]
 		const contract = this.props.drizzle.contracts.Bankcoin
 
@@ -102,11 +126,10 @@ export class Loans extends React.Component {
 			asDebtor: [],
 			asLender: [],
 		}
-		
+
 		signedLoans.forEach((loan) => {
-			console.log(loan)
 			if (loan.returnValues._debtor === this.props.drizzleState.accounts[0]) {
-			organizedLoans.asDebtor.push(loan)
+				organizedLoans.asDebtor.push(loan)
 			}
 			if (loan.returnValues._lender === this.props.drizzleState.accounts[0]) {
 				organizedLoans.asLender.push(loan)
@@ -117,7 +140,45 @@ export class Loans extends React.Component {
 	}
 
 	render() {
+		const { Bankcoin } = this.props.drizzleState.contracts
+		console.log(this.state.inscriptionKeys)	
+		let loanStuff = {0: "Loading", 1: "Loading", 2: "Loading"}
+		let debtStuff = {0: "Loading", 1: "Loading", 2: "Loading"}
+		for (let i in this.state.inscriptionKeys) {
+			let values = [];
+			let inscriptionKey = this.state.inscriptionKeys[i]
+			let loanTuple;
+			if (inscriptionKey in Bankcoin.getLoanByIndex) {
+				loanTuple = Bankcoin.getLoanByIndex[inscriptionKey].value
+				let formatTime = new Date(loanTuple[1] *1000)
+				loanTuple[1] = formatTime.toString()
 
+				values.push(loanTuple)
+
+
+			} else {
+				loanTuple = {0: "Loading", 1: "Loading", 2: "Loading"}
+				values.push(loanTuple)
+			}
+			loanStuff = values
+		}
+		
+		for (let j in this.state.signedLoanKeys) {
+			let values = []
+			let signedLoanKey = this.state.signedLoanKeys[j]
+			let debtTuple
+			if (signedLoanKey in Bankcoin.getDebtByIndex) {
+				debtTuple = Bankcoin.getDebtByIndex[signedLoanKey].value
+				console.log(debtTuple)
+				let formatTime = new Date(debtTuple[1] *1000)
+				debtTuple[1] = formatTime.toString()
+				values.push(debtTuple)
+			} else {
+				debtTuple = {0: "Loading", 1:"Loading", 2:"Loading"}
+				values.push(debtTuple)
+			}
+			debtStuff = values
+		}
 		return (<div>
 			<form onSubmit={this.createLoan}>
 				<label>
@@ -145,11 +206,20 @@ export class Loans extends React.Component {
 				<thead>
 					<tr>
 						<th>debtor</th>
+						<th>amount</th>
+						<th>time</th>
+						<th>Status</th>
+
 					</tr>
 				</thead>
 				<tbody>
 					{this.state.inscriptions.fromMe.map((inscription, i) => {
-						return <tr key={i}><td>{inscription.returnValues._debtor}</td></tr>
+						return (<tr key={i}>
+							<td>{inscription.returnValues._debtor}</td>
+							<td>{loanStuff[i] ? loanStuff[i][0]: "Loading"}</td>
+							<td>{loanStuff[i][1]}</td>
+							<td>{loanStuff[i][2].toString()}</td> 
+						</tr>)
 					})
 					}
 				</tbody>
@@ -159,18 +229,25 @@ export class Loans extends React.Component {
 				<thead>
 					<tr>
 						<th>lender</th>
+						<th>amount</th>
+						<th>time</th>
+						<th>status</th>
+						<th>actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{this.state.inscriptions.toMe.map((inscription, i) => {
 						return <tr key={i}>
 							<td>{inscription.returnValues._lender}</td>
+							<td>{debtStuff[i][0]}</td>
+							<td>{debtStuff[i][1]}</td>
+							<td>{debtStuff[i][2].toString()}</td>
 							<td><button onClick={() => this.signLoan(inscription.returnValues._lender, inscription.returnValues._id)}>Sign Loan</button>
 							</td>
-							</tr>
-						})
+						</tr>
+					})
 					}
-					
+
 				</tbody>
 			</table>
 

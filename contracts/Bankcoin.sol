@@ -74,17 +74,14 @@ contract Bankcoin {
 	function _mint(address reciever, uint256 amount) internal {
 		require(reciever != address(0));
 
-		Account memory account = _accounts[reciever];
-		account._balance += amount;
+		_accounts[reciever]._balance += amount; 
 
 	}
 
 
 	function _transfer(address to, address from, uint256 amount) internal {	
-		Account memory senderAccount = _accounts[from];
-		Account memory recieverAccount = _accounts[to];
-		senderAccount._balance -= amount;
-		recieverAccount._balance += amount;
+		_accounts[from]._balance -= amount;
+		_accounts[to]._balance += amount;
 	}
 
 	function transfer(address account, uint256 amount) public payable returns (bool success) {	
@@ -141,11 +138,11 @@ contract Bankcoin {
 		return true;
 	}
 
-	function getDebtIndex(address lender) public returns (uint256) {
+	function getDebtIndex(address lender) public view returns (uint256) {
 		return _loanIndices[lender][msg.sender].length;
 	}
 
-	function getDebtByIndex(address lender, uint256 index) public returns (uint256, uint256, bool) {
+	function getDebtByIndex(address lender, uint256 index) public view returns (uint256, uint256, bool) {
 		Loan memory loan = _loans[lender][msg.sender][index - 1];
 		return (loan._principle, loan._time, loan._isApproved);
 
@@ -155,7 +152,7 @@ contract Bankcoin {
 		return _loanIndices[msg.sender][debtor].length;
 	}
 
-	function getLoanByIndex(address debtor, uint256 index) public returns (uint256, uint256, bool) {
+	function getLoanByIndex(address debtor, uint256 index) public view returns (uint256, uint256, bool) {
 		Loan[] memory loans = _loans[msg.sender][debtor];
 		return (loans[index - 1]._principle, loans[index - 1]._time, loans[index -1]._isApproved);
 	}

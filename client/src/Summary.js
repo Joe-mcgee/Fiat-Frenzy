@@ -43,8 +43,6 @@ export class Summary extends React.Component {
 
 		let event = null
 		event = this.state.InscribeLoan
-		console.log(event)
-		console.log(balance)
 		return (
 			<div>
 				<div>
