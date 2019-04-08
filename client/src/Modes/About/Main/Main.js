@@ -11,9 +11,9 @@ export class Main extends React.Component {
 		
 	}
 	
-	generateWrapper() {
+gTgenerateWrapper() {
 		return styled.div`
-			grid-row: 4 / 21;
+			grid-row: 4 / 22;
 			grid-column: 1 / -1;
 			background-color: teal;
 		`

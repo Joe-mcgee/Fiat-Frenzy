@@ -1,6 +1,7 @@
 
 import React from "react";
 import styled from 'styled-components'
+import { Nav } from './Nav/Nav' 
 export class About extends React.Component {
 	constructor(props) {
 		super(props)
@@ -12,8 +13,8 @@ export class About extends React.Component {
 
 
 	render() {
+
 		return (
-			<div>
-			</div>)
-	}
+		<Nav cell={this.props.cell}/>
+		)	}
 }
