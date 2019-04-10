@@ -15,11 +15,9 @@ export const App = () => (
 			}
 			//pass drizzle down as props into a subcomponen
 			return (
-				<div>
 					<Layout 
 						drizzle={drizzle}
 						drizzleState={drizzleState} />
-			</div>
 			)
 		}}
 	</DrizzleContext.Consumer>

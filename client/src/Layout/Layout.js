@@ -27,12 +27,12 @@ export class Layout extends React.Component {
 
 
 
-	generateGrid(width, height) {
+	generateGrid(activeComponent, width, height) {
 		let cell = this.calcActiveCell(width, height)
 		// is portrait mode
 		switch (height >= width) {
 			case true:
-				return styled.div`
+				return styled(activeComponent)`
 					display: grid;
 					grid-template-rows: repeat(21, ${cell}px);
 					grid-template-columns: repeat(21, ${cell}px);
@@ -40,7 +40,7 @@ export class Layout extends React.Component {
 			case false:
 				let neededColumns = Math.round((width / cell));
 
-				return styled.div`
+				return styled(activeComponent)`
 					display: grid;
 					grid-template-rows: repeat(21, ${cell}px);
 					grid-template-columns: repeat(${neededColumns}, ${cell}px);
@@ -51,7 +51,7 @@ export class Layout extends React.Component {
 	calcActiveCell() {
 		let length;
 		if (window.innerHeight >= window.innerWidth) {
-			return window.inneridth / 21
+			return window.innerWidth / 21
 		}
 		return window.innerHeight / 21;
 	}
@@ -61,20 +61,18 @@ export class Layout extends React.Component {
 	}
 
 	render() {
-		let Grid = this.generateGrid(this.state.width, this.state.height)
-		let activeComponent
+		let Grid;
 		switch (this.state.mode) {
 			case ('About'):
-				activeComponent = <About drizzle={this.props.drizzle}
-																 drizzleState={this.props.drizzleState}
-																 mode={this.state.mode}
-																 cell={this.calcActiveCell()}/>
+				Grid = this.generateGrid(About, this.state.width, this.state.height)
+	
 		}
-		
 		return (
-			<Grid className='grid'>
-				{activeComponent}
-			</Grid>
+			<Grid className='grid'
+			 drizzle={this.props.drizzle}
+			 drizzleState={this.props.drizzleState}
+			 mode={this.state.mode}
+			 cell={this.calcActiveCell()}/>
 			)
 	}
 }

@@ -17,10 +17,11 @@ export class Nav extends NavLayout  {
 			width: 100%;
 			height: 100%;
 			grid-column: 1 / 9;
-			grid-row: 1 / 3;
+			grid-row: 1 / 4;
 			background-color: black;
 		`
 	}
+
 	generateGreyBar() {
 		return styled.div`
 			grid-column: 9 / -4;
@@ -28,7 +29,6 @@ export class Nav extends NavLayout  {
 			background-color: black;
 			/* Race Tile */
 			display: grid;
-			grid-template-columns: 
 		`
 	}
 

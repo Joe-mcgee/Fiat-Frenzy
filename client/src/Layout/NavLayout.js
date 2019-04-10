@@ -9,6 +9,7 @@ export class NavLayout extends React.Component {
 			let neededColumns = Math.round((window.innerWidth / Number(cell)));
 			console.log(neededColumns)
 		return styled.div`
+			background-color: black;
 			grid-row: 1 / 4;
 			grid-column: 1 / -1;
 			display: grid;
