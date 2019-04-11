@@ -67,6 +67,7 @@ export class Layout extends React.Component {
 				Grid = this.generateGrid(About, this.state.width, this.state.height)
 	
 		}
+
 		return (
 			<Grid className='grid'
 			 drizzle={this.props.drizzle}

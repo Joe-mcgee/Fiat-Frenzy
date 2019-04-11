@@ -2,16 +2,28 @@ import React from "react";
 import styled from 'styled-components'
 import logo from 'src/../static/Logo.png'
 import userIcon from 'src/../static/user-icon.png'
-import { NavLayout } from 'Layout/NavLayout'
-export class Nav extends NavLayout  {
+export class Nav extends React.Component {
 	constructor(props) {
 		super(props)
+		this.state =  {
+			userNavHidden: true
+		}
 	}
 	componentdidMount() {
 
 	}
 
-	
+	generateWrapper() {
+		
+		return styled.div`
+			grid-row: 1 / 4;
+			grid-column: 1 / -1;
+			display: grid;
+			grid-template-rows: repeat(3, ${this.props.cell}px);
+			grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
+			background-color: black;
+		`
+	}
 	generateLogo() {
 		return styled.img`
 			width: 100%;
@@ -21,14 +33,12 @@ export class Nav extends NavLayout  {
 			background-color: black;
 		`
 	}
-
 	generateGreyBar() {
 		return styled.div`
 			grid-column: 9 / -4;
 			grid-row: 1 / 4;
 			background-color: black;
 			/* Race Tile */
-			display: grid;
 		`
 	}
 
@@ -37,27 +47,39 @@ export class Nav extends NavLayout  {
 			width: 100%;
 			height: 100%;
 			grid-column: -1 / -4;
-			grid-row: -1 / -4;
+			grid-row: 1 / 4;
 			background-color: black;
 		`
 	}
-
+	popOverUserNav() {
+		let curState = this.state.userNavHidden
+		this.setState({userNavHidden: !curState})
+	}
 
 	render() {
-		let Wrapper = this.generateWrapper(this.props.cell)
 		let Logo = this.generateLogo()
 		let GreyBar = this.generateGreyBar()
 		let UserIcon = this.generateUserIcon()
 	
-
-
-		return (
-			<Wrapper className='about-nav'>
-				<Logo src={logo} className="logo">
+		let Wrapper = this.generateWrapper()
+		let NavBar = styled(({className}) => { return (
+			<Wrapper className={className}>
+				<Logo src={logo}>
 				</Logo>
 				<GreyBar />
-				<UserIcon src={userIcon} />
+				<UserIcon src={userIcon}
+					onClick={() => {
+						this.popOverUserNav()	
+					}}/>
 			</Wrapper>
+		)})`
+			grid-row: 1 / 4;
+			grid-column: 1 / -1;
+		`
+		let activeComponent = <NavBar /> 
+
+		return (
+			<NavBar />		
 		)
 	}
 	}

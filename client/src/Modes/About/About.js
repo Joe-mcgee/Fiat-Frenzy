@@ -14,8 +14,7 @@ export class About extends React.Component {
 
 
 	render() {
-		
-		let Wrapper = styled.div``
+	let Wrapper = styled.div``	
 		return (
 		<Wrapper>		
 			<Nav cell={this.props.cell}/>
