@@ -2,11 +2,12 @@ import React from "react";
 import styled from 'styled-components'
 import logo from 'src/../static/Logo.png'
 import userIcon from 'src/../static/user-icon.png'
+import { UserPopover } from './UserPopover'
 export class Nav extends React.Component {
 	constructor(props) {
 		super(props)
 		this.state =  {
-			userNavHidden: true
+			userPopover: false
 		}
 	}
 	componentdidMount() {
@@ -52,8 +53,9 @@ export class Nav extends React.Component {
 		`
 	}
 	popOverUserNav() {
-		let curState = this.state.userNavHidden
-		this.setState({userNavHidden: !curState})
+		console.log('clicked')
+		let curState = this.state.userPopover
+		this.setState({userPopover: !curState})
 	}
 
 	render() {
@@ -71,12 +73,15 @@ export class Nav extends React.Component {
 					onClick={() => {
 						this.popOverUserNav()	
 					}}/>
+				{this.state.userPopover && 
+					<UserPopover cell={this.props.cell} modeHandler={this.props.modeHandler} />
+				 }
+
 			</Wrapper>
 		)})`
 			grid-row: 1 / 4;
 			grid-column: 1 / -1;
 		`
-		let activeComponent = <NavBar /> 
 
 		return (
 			<NavBar />		

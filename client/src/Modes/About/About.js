@@ -17,8 +17,8 @@ export class About extends React.Component {
 	let Wrapper = styled.div``	
 		return (
 		<Wrapper>		
-			<Nav cell={this.props.cell}/>
-			<Main cell={this.props.cell} />
+			<Nav cell={this.props.cell} mode={this.props.mode} modeHandler= {this.props.modeHandler}/>
+			<Main cell={this.props.cell} mode={this.props.mode} />
 		</Wrapper>
 		)	}
 }

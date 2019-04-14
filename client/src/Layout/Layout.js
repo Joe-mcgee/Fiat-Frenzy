@@ -4,6 +4,7 @@ import logo from '../static/Logo.png'
 import userIcon from '../static/user-icon.png'
 
 import { About } from '../Modes/About/About'
+import { Core } from '../Modes/Core/Core'
 
 export class Layout extends React.Component {
 	constructor(props) {
@@ -14,6 +15,11 @@ export class Layout extends React.Component {
 			height: 0,
 		};
 		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
+		this.modeHandler = this.modeHandler.bind(this)
+	}
+
+	modeHandler(mode) {
+		this.setState({mode: mode })
 	}
 
 	componentDidMount() {
@@ -65,7 +71,9 @@ export class Layout extends React.Component {
 		switch (this.state.mode) {
 			case ('About'):
 				Grid = this.generateGrid(About, this.state.width, this.state.height)
-	
+				break;
+			case ('Core'):
+				Grid = this.generateGrid(Core, this.state.width, this.state.height)
 		}
 
 		return (
@@ -73,6 +81,7 @@ export class Layout extends React.Component {
 			 drizzle={this.props.drizzle}
 			 drizzleState={this.props.drizzleState}
 			 mode={this.state.mode}
+			 modeHandler = {this.modeHandler}
 			 cell={this.calcActiveCell()}/>
 			)
 	}
