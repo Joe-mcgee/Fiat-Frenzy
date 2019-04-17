@@ -13,18 +13,33 @@ export class Layout extends React.Component {
 			mode: 'About',
 			width: 0,
 			height: 0,
+			balanceKey: null,
+			assetKey: null,
+			liabilityKey: null,
+			InscribeLoan: null,
 		};
 		this.updateWindowDimensions = this.updateWindowDimensions.bind(this);
 		this.modeHandler = this.modeHandler.bind(this)
-	}
+	}bind
 
 	modeHandler(mode) {
 		this.setState({mode: mode })
 	}
 
-	componentDidMount() {
+	async componentDidMount() {
 		this.updateWindowDimensions();
 		window.addEventListener('resize', this.updateWindowDimensions);
+		const { drizzle, drizzleState } = this.props;
+		const contract = drizzle.contracts.Bankcoin;
+		console.log(contract)
+		let address = this.props.drizzleState.accounts[0]
+		const balanceKey = contract.methods.balanceOf.cacheCall(address)	
+		const assetKey = contract.methods.assetsOf.cacheCall(address)	
+		const liabilityKey = contract.methods.liabilitiesOf.cacheCall(address)
+		this.setState({ balanceKey })
+		this.setState({ assetKey })
+		this.setState({ liabilityKey })
+
 	}
 
 	componentWillMount() {
@@ -67,6 +82,33 @@ export class Layout extends React.Component {
 	}
 
 	render() {
+		const { Bankcoin } = this.props.drizzleState.contracts
+		let balance = null;
+		let assets = null;
+		let liabilities = null;
+		if (this.state.balanceKey in Bankcoin.balanceOf) {
+			balance = Bankcoin.balanceOf[this.state.balanceKey].value
+		} else {
+			balance = "Loading" 
+		}
+		if (this.state.assetKey in Bankcoin.assetsOf) {
+			assets = Bankcoin.assetsOf[this.state.balanceKey].value
+		} else {
+			assets = "Loading" 
+		}
+		if (this.state.liabilityKey in Bankcoin.liabilitiesOf) {
+			liabilities = Bankcoin.liabilitiesOf[this.state.liabilityKey].value
+		} else {
+			liabilities = "Loading" 
+		}
+
+		let event = null
+		event = this.state.InscribeLoan
+		let blockchainProp = {
+			balance,
+			assets,
+			liabilities
+		}
 		let Grid;
 		switch (this.state.mode) {
 			case ('About'):
@@ -75,14 +117,13 @@ export class Layout extends React.Component {
 			case ('Core'):
 				Grid = this.generateGrid(Core, this.state.width, this.state.height)
 		}
-
+		
 		return (
 			<Grid className='grid'
-			 drizzle={this.props.drizzle}
-			 drizzleState={this.props.drizzleState}
-			 mode={this.state.mode}
-			 modeHandler = {this.modeHandler}
-			 cell={this.calcActiveCell()}/>
+				ledger={blockchainProp}
+				mode={this.state.mode}
+				modeHandler={this.modeHandler}
+				cell={this.calcActiveCell()}/>
 			)
 	}
 }

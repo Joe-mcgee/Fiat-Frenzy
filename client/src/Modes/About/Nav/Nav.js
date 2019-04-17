@@ -19,11 +19,7 @@ export class Nav extends React.Component {
 		return styled.div`
 			grid-row: 1 / 4;
 			grid-column: 1 / -1;
-			display: grid;
-			grid-template-rows: repeat(3, ${this.props.cell}px);
-			grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
-			background-color: black;
-		`
+	`
 	}
 	generateLogo() {
 		return styled.img`
@@ -82,6 +78,11 @@ export class Nav extends React.Component {
 		)})`
 			grid-row: 1 / 4;
 			grid-column: 1 / -1;
+			display: grid;
+			grid-template-rows: repeat(3, ${this.props.cell}px);
+			grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
+			background-color: black;
+	
 		`
 
 		return (

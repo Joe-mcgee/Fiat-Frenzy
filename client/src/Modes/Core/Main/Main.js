@@ -1,10 +1,13 @@
 
 import React from "react";
 import styled from 'styled-components'
-
+import { Dashboard } from './Dashboard'
 export class Main extends React.Component {
 	constructor(props) {
-	super(props)	
+		super(props)
+		this.state = {
+			active: "Dashboard"
+		}
 	}
 
 	generateDashButton() {
@@ -55,8 +58,6 @@ export class Main extends React.Component {
 		`
 	}
 	render() {
-		console.log(this.props.mode)
-		
 		let neededColumns = Math.round((window.innerWidth / Number(this.props.cell)));
 		
 		let DashButton = this.generateDashButton();
@@ -73,13 +74,15 @@ export class Main extends React.Component {
 		display: grid;
 		grid-template-rows: repeat(auto-fill, ${this.props.cell}px);
 		grid-template-columns: repeat(${neededColumns}, ${this.props.cell}px);
-		
 		`
-	
 		let Main = styled(({className}) => {
 			return (
 				<div className={className}>
-				<MainBar className="Main-Bar" />
+					<MainBar className="Main-Bar" />
+					 <Dashboard
+						 ledger={this.props.ledger}
+						 cell={this.props.cell} />
+		
 				</div>
 				) })`
 					grid-row: 3 / -1;

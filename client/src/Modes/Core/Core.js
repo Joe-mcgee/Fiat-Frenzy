@@ -14,8 +14,12 @@ export class Core extends React.Component {
 		return (
 			<Wrapper className={this.props.className}>
 			<Nav className="Nav" cell={this.props.cell} mode={this.props.mode} modeHandler= {this.props.modeHandler}/>
-			<Main className="Main" cell={this.props.cell} mode={this.props.mode} />			
-			</Wrapper>)
+			<Main
+				ledger={this.props.ledger}
+				className="Main"
+				cell={this.props.cell}
+				mode={this.props.mode} />			
+			</Wrapper>) 
 	}
 
 }
