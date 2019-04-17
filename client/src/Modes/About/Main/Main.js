@@ -11,9 +11,10 @@ export class Main extends MainLayout {
 	}
 	
 	render() {
-		let Wrapper = this.generateWrapper(this.props.cell);
+		console.log(this.props.mode)
+		let Wrapper = this.generateWrapper(this.props.cell, this.props.mode);
 		return (
-			<Wrapper className="main"> 
+			<Wrapper className={this.props.className}> 
 			</Wrapper>)
 	}
 }

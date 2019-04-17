@@ -1,3 +1,4 @@
+
 import React from "react";
 import styled from 'styled-components'
 export class UserPopover extends React.Component {
@@ -32,7 +33,7 @@ export class UserPopover extends React.Component {
 			</div>
 		)})`
 			position: fixed;
-			top: ${this.props.cell * 2}px;
+			top: ${this.props.cell * 3}px;
 			right: 0;
 			width: 38.1%;
 			height: ${window.innerHeight / 3}px;
