@@ -1,7 +1,7 @@
 
 import React from "react";
 import styled from 'styled-components'
-import { Dashboard } from './Dashboard'
+import { Dashboard } from './Dashboard/Dashboard'
 export class Main extends React.Component {
 	constructor(props) {
 		super(props)
