@@ -11,7 +11,7 @@ export class Dashboard extends React.Component {
 		return styled.div`
 		grid-row: 1 / -1;
 		grid-column: 6 / -1;
-		background-color: blue;
+		background-color: black;
 		display: grid;
 		grid-template-rows: repeat(auto-fill, ${this.props.cell}px);
 		grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
@@ -22,6 +22,7 @@ export class Dashboard extends React.Component {
 		return ( 
 			<Wrapper className="Dashboard">
 				<Summary
+					cell={this.props.cell}
 					ledger={this.props.ledger} />
 	
 			</Wrapper>

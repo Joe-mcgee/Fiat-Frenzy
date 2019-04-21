@@ -11,48 +11,43 @@ export class Main extends React.Component {
 	}
 
 	generateDashButton() {
-		let Title = styled.h1`
-				display: inline-block;
-				line-height: 65px;
-		`
+		
 		return styled(({className}) => {return (
 			<div className={className}>
-				<Title id="dash-title">Dashboard</Title>	
+				Dashboard
 			</div>
 		)})`
 			grid-row: 1 / 3;
 			grid-column: 1 / 6;
 			color: #50c878;
-			width: 100%;
-			height: 100%;
-			
+			font-size: ${this.props.cell}px;
+			margin: 0;	
+
 			text-align: center;
+			line-height: ${this.props.cell*2}px;
 			&:hover {
-			background-color: #e0115f;
+			background-color:  #50c878;
+			color:  #e0115f; 
 			}
 		`
 	}
 
 	generatePortButton() {
-		let Title = styled.h1`
-			display: inline-block;
-			line-height: 65px;
-			font: BigNoodle;
-		`
 		return styled(({className}) => { return (
 			<div className={className}>
-				<Title>Portfolio</Title>
+				Portfolio
 			</div>
 		)})`
 			grid-row: 3 / 5;
 			grid-column: 1 / 6;
 			color: #50c878;
-			width: 100%;
-			height: 100%;
-			
+			margin: 0;
 			text-align: center;
+			font-size: ${this.props.cell}px;
+			line-height: ${this.props.cell*2}px;
 			&:hover {
-			background-color: #e0115f;
+				background-color:  #50c878;
+				color:  #e0115f;
 			}
 
 		`
@@ -61,6 +56,7 @@ export class Main extends React.Component {
 		let neededColumns = Math.round((window.innerWidth / Number(this.props.cell)));
 		
 		let DashButton = this.generateDashButton();
+		console.log(DashButton)
 		let PortButton = this.generatePortButton();
 		let MainBar = styled(({className}) => { return (
 			<div className={className}>
@@ -72,13 +68,16 @@ export class Main extends React.Component {
 		grid-column: 1 / 6;
 		background-color: black;
 		display: grid;
+
 		grid-template-rows: repeat(auto-fill, ${this.props.cell}px);
 		grid-template-columns: repeat(${neededColumns}, ${this.props.cell}px);
 		`
 		let Main = styled(({className}) => {
 			return (
 				<div className={className}>
-					<MainBar className="Main-Bar" />
+					<MainBar className="Main-Bar"
+						cell={this.props.cell}		
+					/>
 					 <Dashboard
 						 ledger={this.props.ledger}
 						 cell={this.props.cell} />
