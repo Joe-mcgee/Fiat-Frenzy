@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import userIcon from 'src/../static/user-icon.png'
 import logo from 'src/../static/Logo.png'
 import { UserPopover } from './UserPopover'
+import { SummaryBar } from './SummaryBar'
 export class Nav extends React.Component {
 	constructor(props) {
 		super(props)	
@@ -67,7 +68,10 @@ export class Nav extends React.Component {
 			<Wrapper className={className}>
 				<Logo src={logo}>
 				</Logo>
-				<GreyBar />
+				<SummaryBar
+					className="Summary"
+					cell={this.props.cell}
+					ledger={this.props.ledger}/>
 				<UserIcon src={userIcon}
 					onClick={() => {
 						this.popOverUserNav()	

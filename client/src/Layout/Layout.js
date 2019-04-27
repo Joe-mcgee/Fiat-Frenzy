@@ -31,11 +31,12 @@ export class Layout extends React.Component {
 		window.addEventListener('resize', this.updateWindowDimensions);
 		const { drizzle, drizzleState } = this.props;
 		const contract = drizzle.contracts.Bankcoin;
-		console.log(contract)
 		let address = this.props.drizzleState.accounts[0]
 		const balanceKey = contract.methods.balanceOf.cacheCall(address)	
 		const assetKey = contract.methods.assetsOf.cacheCall(address)	
 		const liabilityKey = contract.methods.liabilitiesOf.cacheCall(address)
+		
+			
 		this.setState({ balanceKey })
 		this.setState({ assetKey })
 		this.setState({ liabilityKey })

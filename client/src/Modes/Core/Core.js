@@ -13,10 +13,16 @@ export class Core extends React.Component {
 		let Wrapper = styled.div``
 		return (
 			<Wrapper className={this.props.className}>
-			<Nav className="Nav" cell={this.props.cell} mode={this.props.mode} modeHandler= {this.props.modeHandler}/>
+				<Nav
+					className="Nav"
+					ledger={this.props.ledger}
+					cell={this.props.cell}
+					mode={this.props.mode}
+					modeHandler= {this.props.modeHandler}
+					/>
 			<Main
-				ledger={this.props.ledger}
 				className="Main"
+				ledger={this.props.ledger}
 				cell={this.props.cell}
 				mode={this.props.mode} />			
 			</Wrapper>) 

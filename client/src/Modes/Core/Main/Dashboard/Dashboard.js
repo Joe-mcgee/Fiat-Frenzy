@@ -2,6 +2,7 @@
 import React from "react";
 import styled from 'styled-components'
 import { Summary } from './Summary'
+import { Loans } from './Loans'
 export class Dashboard extends React.Component {
 	constructor(props) {
 		super(props)
@@ -24,7 +25,9 @@ export class Dashboard extends React.Component {
 				<Summary
 					cell={this.props.cell}
 					ledger={this.props.ledger} />
-	
+			<Loans className="Loans"
+				cell={this.props.cell}
+				ledger={this.props.ledger}/>	
 			</Wrapper>
 		)
 	}
