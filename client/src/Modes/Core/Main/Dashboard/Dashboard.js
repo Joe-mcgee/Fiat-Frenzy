@@ -2,7 +2,7 @@
 import React from "react";
 import styled from 'styled-components'
 import { Summary } from './Summary'
-import { Loans } from './Loans'
+import { Loans } from './Loans/Loans'
 export class Dashboard extends React.Component {
 	constructor(props) {
 		super(props)
@@ -23,11 +23,19 @@ export class Dashboard extends React.Component {
 		return ( 
 			<Wrapper className="Dashboard">
 				<Summary
+					balance={this.props.balance}
+					liabilities={this.props.liabilities}
+					assets={this.props.assets}
 					cell={this.props.cell}
-					ledger={this.props.ledger} />
+					 />
 			<Loans className="Loans"
 				cell={this.props.cell}
-				ledger={this.props.ledger}/>	
+				loanData={this.props.loanData}
+				debtData={this.props.debtData}
+				inscriptions={this.props.inscriptions}
+				drizzle={this.props.drizzle}
+				drizzleState={this.props.drizzleState}
+				/>	
 			</Wrapper>
 		)
 	}

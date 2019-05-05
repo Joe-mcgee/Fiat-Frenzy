@@ -26,6 +26,7 @@ export class Loans extends React.Component {
 		const { drizzle, drizzleState } = this.props;
 		const contract = drizzle.contracts.Bankcoin
 		let address = this.props.drizzleState.accounts[0]
+
 		let inscriptions = await this.getInscriptions()
 		let organizedInscriptions = this.organizeInscriptions(inscriptions)
 		this.setState({inscriptions: organizedInscriptions})

@@ -7,12 +7,16 @@ contract Bankcoin {
 	event InscribeLoan(
 		address indexed _lender,
 		uint256 indexed _id,
-		address indexed  _debtor
+		address indexed  _debtor,
+		uint256 _amount,
+		uint256 _time
 	);
 	event SignLoan(
 		address indexed _lender,
 	  uint256	indexed _id,
-		address indexed _debtor
+		address indexed _debtor,
+		uint256 _amount,
+		uint256 _time
 	);
 
 
@@ -110,18 +114,24 @@ contract Bankcoin {
 		return true;
 	}
 
-	function createLoan(address debtor, uint256 amount) public returns (bool) {
+	function createLoan(address debtor, uint256 amount, uint256 timeDelta) public returns (bool) {
 		uint256 lenderAssets = balanceOf(msg.sender);
 		uint256 lenderLiabilities = liabilitiesOf(msg.sender) + amount;
 		if(Helpers.percent(lenderLiabilities, lenderAssets, 9)  > reserveRequirement) {
 			return false;
 		}	
-		Loan memory newLoan = Loan(amount, now, false);
+		Loan memory newLoan = Loan(amount, now + timeDelta, false);
 		// add to chain
 		_loans[msg.sender][debtor].push(newLoan);
 		_loanIndices[msg.sender][debtor].push(_loans[msg.sender][debtor].length);
 
-		emit InscribeLoan(msg.sender,_loanIndices[msg.sender][debtor].length, debtor);
+		emit InscribeLoan(
+			msg.sender,
+			_loanIndices[msg.sender][debtor].length,
+		 	debtor,
+			amount,
+			now + timeDelta
+			);
 		return true;		
 	}
 
@@ -134,7 +144,13 @@ contract Bankcoin {
 		_accounts[lender]._assets  += loan._principle;
 		_loans[lender][msg.sender][index - 1]._isApproved = true;
 		// SignLoan(Creditor, index, Lender)
-		emit SignLoan(msg.sender, index, lender);
+		emit SignLoan(
+			msg.sender,
+		 	index,
+		 	lender,
+			loan._principle,
+			loan._time
+			);
 		return true;
 	}
 

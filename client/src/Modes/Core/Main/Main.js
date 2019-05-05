@@ -78,9 +78,18 @@ export class Main extends React.Component {
 					<MainBar className="Main-Bar"
 						cell={this.props.cell}		
 					/>
-					 <Dashboard
-						 ledger={this.props.ledger}
-						 cell={this.props.cell} />
+					<Dashboard
+						drizzle={this.props.drizzle}
+						drizzleState={this.props.drizzleState}
+						balance={this.props.balance}
+						liabilities={this.props.liabilities}
+						assets={this.props.assets}
+						loanData={this.props.loanData}
+						debtData={this.props.debtData}
+						inscriptions={this.props.inscriptions}
+						cell={this.props.cell}
+
+					/>
 		
 				</div>
 				) })`
@@ -92,7 +101,7 @@ export class Main extends React.Component {
 				`
 		
 		return (
-		<Main className={this.props.className}>
+			<Main className={this.props.className}>
 		</Main>
 		)	
 	}

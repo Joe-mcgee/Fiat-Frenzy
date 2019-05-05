@@ -56,23 +56,9 @@ export class SummaryBar extends React.Component {
 			grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
 		`
 				
-		
-		let Balance = this.generateSummaryCard(this.props.ledger.balance, "Balance", 0)
-		let Assets = this.generateSummaryCard(this.props.ledger.assets, "Assets", 1)
-		let Liabilities = this.generateSummaryCard(this.props.ledger.liabilities, "Liabilities", 2)
-		let freeTokens = this.props.ledger.balance - (this.props.ledger.liabilities*(0.618))
-		let Free = this.generateSummaryCard(freeTokens, "Liquid Tokens", 3)
 		return (
 			
 			<Wrapper className="Summary">
-				<Balance className="Balance">	
-				</Balance>
-				<Assets className="Assets">
-				</Assets>
-				<Liabilities className="Liabilities">
-				</Liabilities>
-				<Free className="Free">
-				</Free>
 			</Wrapper>
 		)
 	}
