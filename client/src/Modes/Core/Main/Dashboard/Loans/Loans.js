@@ -91,6 +91,7 @@ export class Loans extends React.Component {
 				main = styled(({className}) => { 
 					return (
 						<SignLoan
+							cell={this.props.cell}
 							className={className}
 							debtData={this.props.debtData}
 							inscriptions={this.props.inscriptions}
