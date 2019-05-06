@@ -10,6 +10,15 @@ export class SignLoan extends React.Component {
 
 		this.unixToDate = this.unixToDate.bind(this) 
 	}
+	
+	async signLoan(lender, _id) {
+		let address = this.props.drizzleState.accounts[0]
+		const contract = this.props.drizzle.contracts.Bankcoin
+		console.log(contract.methods)
+		let signLoan = await contract.methods.signLoanByIndex(lender, _id).send()
+		console.log(signLoan)
+	}
+
 
 	unixToDate(time) {
 		let inMs = time * 1000;
@@ -25,23 +34,23 @@ export class SignLoan extends React.Component {
 		let TitleBar = styled(({className}) => {
 			let Lender = styled.div`
 				grid-row: 1 / -1;
-				grid-column: 1 / 5;
+				grid-column: 1;
 			`
 			let Amount = styled.div`
 				grid-row: 1 / -1;
-				grid-column: 5 / 7;
+				grid-column: 2;
 			`
 			let Time = styled.div`
 				grid-row: 1 / -1;
-				grid-column: 7 / 11;
+				grid-column: 3;
 			`
 			let Status = styled.div`
 				grid-row: 1 / -1;
-				grid-column: 11 / 13;
+				grid-column: 4;
 			`
 			let Actions = styled.div`
 				grid-row: 1 / -1;
-				grid-column: 13 / -1;
+				grid-column: 5;
 			`
 			return (
 				<div className={className}>
@@ -58,28 +67,61 @@ export class SignLoan extends React.Component {
 			display: grid;
 			background-color: #50c878;
 			grid-template-rows: repeat(auto-fill, ${this.props.cell}px);
-			grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
+			grid-template-columns: repeat(5, 20%);
 			margin: 0;
 			line-height: ${2*0.618*this.props.cell}px;
 			text-align: center;
 				
 		`	
+
+		let Table = styled(({className}) => {
+			let Value = styled.div`
+				font-size:${0.618*this.props.cell}px;
+				line-height:${2*0.618*this.props.cell}px;
+				text-align: center;
+			`
+			let Rows = this.props.inscriptions.toMe.map((inscription, i) => {
+				let Row = styled(({className}) => {
+					return(
+						<div className={className}>
+								<Value>{inscription.returnValues._lender.substring(0,10)}...</Value>
+								<Value>{inscription.returnValues._amount}</Value>
+								<Value>{this.unixToDate(inscription.returnValues._time)}</Value>
+								<Value>Open</Value>
+								<Value><button onClick={() => this.signLoan(inscription.returnValues._lender, inscription.returnValues._id)}>Sign Loan</button>
+								</Value>
+						</div>
+					)
+				})`
+					grid-row: ${i}/ ${i+1};
+					grid-column: 1 / -1;
+					display: grid;
+					font-size:${0.618*this.props.cell}px;
+					margin: 0;
+					grid-template-rows: repeat(auto-fill, ${this.props.cell}px);
+
+					grid-template-columns: repeat(5, 20%);
+				`
+				return <Row key={i}>
+															</Row>
+			})
+			return (
+				<div className={className}>
+					{Rows}
+				</div>
+			)
+		})`
+		grid-row: 2 / -1;
+		grid-column: 1 / -1;
+		display: grid;
+		grid-template-rows: repeat(auto-fill, ${this.props.cell}px);
+		grid-template-columns: repeat(auto-fill, ${this.props.cell}px);
+		`
 		return (
 				<div className={this.props.className}>
 					<TitleBar className="headers" />
-						<div>
-						{ /*this.props.inscriptions.toMe.map((inscription, i) => {
-							return <tr key={i}>
-								<td>{inscription.returnValues._lender}</td>
-								<td>{inscription.returnValues._amount}</td>
-								<td>{this.unixToDate(inscription.returnValues._time)}</td>
-								<td>status</td>
-								<td><button onClick={() => this.signLoan(inscription.returnValues._lender, inscription.returnValues._id)}>Sign Loan</button>
-								</td>
-							</tr>
-						})
-						*/}
-					</div>
+					<Table className="table" />
+					
 				</div>
 		)
 		}

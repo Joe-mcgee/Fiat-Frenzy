@@ -62,9 +62,9 @@ export class Layout extends React.Component {
 		let inscriptions = await this.getInscriptions()
 		let organizedInscriptions = this.organizeInscriptions(inscriptions)
 		this.setState({inscriptions: organizedInscriptions})
-		let SignedLoans = await this.getSignedLoans()
-		let organizedLoans = this.organizeSignedLoans(SignedLoans)
-		this.setState({signedLoans: organizedLoans})
+		//let SignedLoans = await this.getSignedLoans()
+		//let organizedLoans = this.organizeSignedLoans(SignedLoans)
+		//this.setState({signedLoans: organizedLoans})
 
 		let inscriptionKeys = this.state.inscriptions.fromMe.map((inscription) => {
 			let index = inscription.returnValues._id
@@ -78,6 +78,7 @@ export class Layout extends React.Component {
 			let lender = signedLoan.returnValues._lender
 			return contract.methods.getDebtByIndex.cacheCall(lender, index)
 		})
+		console.log(signedLoanKeys)
 		this.setState({signedLoanKeys: signedLoanKeys})
 	
 	}
@@ -173,15 +174,12 @@ export class Layout extends React.Component {
 		//		{
 		//			from: address
 		//		})
-		//	console.log(tx)
 	}
 
 	async signLoan(lender, _id) {
 		let address = this.props.drizzleState.accounts[0]
 		const contract = this.props.drizzle.contracts.Bankcoin
-		console.log(contract.methods)
 		let signLoan = await contract.methods.signLoanByIndex(lender, _id).send()
-		console.log(signLoan)
 	}
 
 	async getSignedLoans() {
@@ -191,6 +189,7 @@ export class Layout extends React.Component {
 			{
 				fromBlock: 0, toBlock: 'latest'
 			})
+		console.log(pastInscriptions)
 		return pastInscriptions
 	}
 
@@ -236,13 +235,7 @@ export class Layout extends React.Component {
 
 		let event = null
 		event = this.state.InscribeLoan
-		let blockchainProp = {
-			balance,
-			assets,
-			liabilities
-		}
 
-		console.log(this.state.inscriptionKeys)	
 		let loanData = {0: "Loading", 1: "Loading", 2: "Loading"}
 		let debtData = {0: "Loading", 1: "Loading", 2: "Loading"}
 		for (let i in this.state.inscriptionKeys) {
@@ -251,6 +244,7 @@ export class Layout extends React.Component {
 			let loanTuple;
 			if (inscriptionKey in Bankcoin.getLoanByIndex) {
 				loanTuple = Bankcoin.getLoanByIndex[inscriptionKey].value
+				console.log(loanTuple)
 				let formatTime = new Date(loanTuple[1] *1000)
 				loanTuple[1] = formatTime.toString()
 
@@ -263,14 +257,13 @@ export class Layout extends React.Component {
 			}
 			loanData = values
 		}
-		for (let j in this.state.signedLoanKeys) {
+		console.log('here')
+			/*for (let j in this.state.signedLoanKeys) {
 			let values = []
 			let signedLoanKey = this.state.signedLoanKeys[j]
-			console.log(signedLoanKey, 'signed')
-			let debtTuple
+			let debtTuple;
 			if (signedLoanKey in Bankcoin.getDebtByIndex) {
 				debtTuple = Bankcoin.getDebtByIndex[signedLoanKey].value
-				console.log(debtTuple)
 				let formatTime = new Date(debtTuple[1] *1000)
 				debtTuple[1] = formatTime.toString()
 				values.push(debtTuple)
@@ -280,7 +273,7 @@ export class Layout extends React.Component {
 			}
 			debtData = values
 		}
-	
+		*/
 		let Grid;
 		switch (this.state.mode) {
 			case ('About'):

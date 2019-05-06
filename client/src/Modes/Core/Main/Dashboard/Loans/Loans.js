@@ -96,6 +96,7 @@ export class Loans extends React.Component {
 							debtData={this.props.debtData}
 							inscriptions={this.props.inscriptions}
 							drizzle={this.props.drizzle}
+							drizzleState={this.props.drizzleState}
 						/>
 					)
 				})``			
